@@ -22,6 +22,7 @@ const Context = ({ children }) => {
       setloading(false);
     }
   }
+  console.log(products);
 
   useEffect(() => {
     getallproducts();

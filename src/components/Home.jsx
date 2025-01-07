@@ -5,11 +5,8 @@ import { UserContext } from './Context';
 
 const Home = () => {
     const [products, loading] = useContext(UserContext);
-    console.log(' products:', products);
-
     const { search } = useLocation();
     const category = decodeURIComponent(search.split("=")[1]);
-
     const [filteredproducts, setFilteredproducts] = useState(null);
     console.log(' filter:', filteredproducts);
 
@@ -25,8 +22,12 @@ const Home = () => {
     };
 
     useEffect(() => {
-        if (!filteredproducts) setFilteredproducts(products);
-        if (category != 'undefined') getProductByCategory();
+        if (!filteredproducts || category == undefined)
+            setFilteredproducts(products);
+        if (category != 'undefined') {
+            getProductByCategory();
+            setFilteredproducts(products.filter((p) => p.category === category));
+        }
     }, [category, products]);
 
 
@@ -48,11 +49,20 @@ const Home = () => {
 
     return (
         <div className='w-full overflow-y-auto flex flex-wrap bg-zinc-400'>
-            {filteredproducts && filteredproducts.map((p) => (
-                <Link className='w-[18%] m-2 border border-black' key={p.id} to={`/detail/${p.title}`}>
-                    <img className='h-[350px] object-center' src={p.image} alt={p.title} />
-                </Link>
-            ))}
+            {filteredproducts &&
+                filteredproducts.map((p) => (
+                    <Link
+                        key={p.id}
+                        to={`/detail/${p.title}`}
+                        className='w-[18%] m-2 border border-black'
+                    >
+                        <img
+                            className='h-[350px] object-center'
+                            src={p.image}
+                            alt={p.title}
+                        />
+                    </Link>
+                ))}
         </div>
     );
 };
